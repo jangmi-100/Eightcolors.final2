@@ -36,16 +36,19 @@ public class AccommodationSearchService {
 		    int listCount = accommodationSearchMapper.findAvailableResidencesCount(searchKeyword, checkinDate, checkoutDate,accommodationTypes,maxPrice);
 		    
 
-		    int pageCount = 
-		        listCount / PAGE_SIZE + (listCount % PAGE_SIZE == 0 ? 0 : 1); // 상수 PAGE_SIZE 사용
-		    
-		    int startPage = (currentPage / PAGE_GROUP) * PAGE_GROUP + 1
-		            - (currentPage % PAGE_GROUP == 0 ? PAGE_GROUP : 0);
-		    
-		    int endPage = startPage + PAGE_GROUP - 1;
-		    
-		    if (endPage > pageCount) {
-		        endPage = pageCount;
+		    int pageCount = listCount / PAGE_SIZE + (listCount % PAGE_SIZE == 0 ? 0 : 1); // 상수 PAGE_SIZE 사용
+
+			int currentBlock = (int) Math.ceil((double) currentPage / PAGE_GROUP);
+
+//		    int startPage = (currentPage / PAGE_GROUP) * PAGE_GROUP + 1 - (currentPage % PAGE_GROUP == 0 ? PAGE_GROUP : 0);
+
+			int startPage = (currentBlock - 1) * PAGE_GROUP + 1;
+
+//		    int endPage = startPage + PAGE_GROUP - 1;
+			int endPage = Math.min(startPage + PAGE_GROUP - 1, listCount);
+
+		    if (endPage == 0) {
+		        endPage = 1;
 		    }
 
 		List<ResidenceSearch> searchList = accommodationSearchMapper.findAvailableResidences(searchKeyword, checkinDate, checkoutDate,  startRow,PAGE_SIZE,accommodationTypes,maxPrice);
@@ -76,12 +79,19 @@ public class AccommodationSearchService {
 	    List<ResidenceSearch> searchList = accommodationSearchMapper.findAllResidences(startRow, PAGE_SIZE,accommodationTypes,maxPrice);
 
 	    int pageCount = listCount / PAGE_SIZE + (listCount % PAGE_SIZE == 0 ? 0 : 1);
-	    int startPage = (currentPage / PAGE_GROUP) * PAGE_GROUP + 1 - (currentPage % PAGE_GROUP == 0 ? PAGE_GROUP : 0);
-	    int endPage = startPage + PAGE_GROUP - 1;
 
-	    if (endPage > pageCount) {
-	        endPage = pageCount;
-	    }
+		int currentBlock = (int) Math.ceil((double) currentPage / PAGE_GROUP);
+
+//		    int startPage = (currentPage / PAGE_GROUP) * PAGE_GROUP + 1 - (currentPage % PAGE_GROUP == 0 ? PAGE_GROUP : 0);
+
+		int startPage = (currentBlock - 1) * PAGE_GROUP + 1;
+
+//		    int endPage = startPage + PAGE_GROUP - 1;
+		int endPage = Math.min(startPage + PAGE_GROUP - 1, listCount);
+
+		if (endPage == 0) {
+			endPage = 1;
+		}
 
 	    Map<String, Object> modelMap = new HashMap<>();
 	    modelMap.put("results", searchList);
